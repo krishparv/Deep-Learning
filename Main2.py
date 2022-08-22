@@ -196,7 +196,7 @@ def deep_neural_net_gru(train_data_1, train_data_2, train_labels, test_data_1, t
     dense=Dense(hidden_units,activation='relu')(merge_threeconcat)
     output=Dense(1,activation='sigmoid')(dense)
    # final_model.add(Dense(1, activation='sigmoid'))
-    final_model=Model([con_layer.output, mul_layer.output, dif_layer.output],output)
+    final_model=Model([left_branch.input, right_branch.input],output)
     final_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     final_model.fit([train_data_1, train_data_2], train_labels,
                     validation_data=([test_data_1, test_data_2], test_labels),
