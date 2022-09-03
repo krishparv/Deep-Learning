@@ -432,5 +432,5 @@ def evaluate_deep_neural_net(dataset='dataset-string-similarity.txt', method='gr
     sys.stdout.flush()
 
 
-evaluate_deep_neural_net(dataset="dataset_final_jrc_person_new.csv")
+evaluate_deep_neural_net(dataset="dataset_final_jrc_person.csv")
 
