@@ -105,20 +105,23 @@ def deep_neural_net_gru(train_data_1, train_data_2, train_labels, test_data_1, t
     #gru2 = GRU(hidden_units, consume_less='gpu', return_sequences=(alignment or #selfattention or maxpooling))
     gru1 = GRU(hidden_units,  return_sequences=True)
     gru2 = GRU(hidden_units, return_sequences=(alignment or selfattention or maxpooling))
-	if bidirectional:
+	
+    if bidirectional:
         gru1 = Bidirectional(gru1)
         gru2 = Bidirectional(gru2)
     # definition for left branch of the network
+    
     left_branch = Sequential()
     left_branch.add(Masking(mask_value=0, input_shape=(max_len, len_chars)))
     #if error in this shortcut condition, set shortcut =false
-	if shortcut:
+	
+    if shortcut:
         left_branch_aux1 = Sequential()
         left_branch_aux1.add(left_branch)
         left_branch_aux1.add(gru1)
         left_branch_aux2 = Sequential()
         # left_branch_aux2.add(Merge([left_branch, left_branch_aux1], mode='concat'))
-       # merged1 = keras.layers.concatenate([left_branch.output, left_branch_aux1.output])
+        merged1 = keras.layers.concatenate([left_branch.output, left_branch_aux1.output])
        # left_branch_aux2.add(merged1)
         #left_branch_aux2 = Model(inputs=[left_branch.input, left_branch_aux1.input], outputs=merged1)
         #left_branch = left_branch_aux2.add(merged1)merged1 = Concatenate([left_branch.output, left_branch_aux1.output], axis=-1)
@@ -138,15 +141,15 @@ def deep_neural_net_gru(train_data_1, train_data_2, train_labels, test_data_1, t
         right_branch_aux1.add(right_branch)
         right_branch_aux1.add(gru1)
         right_branch_aux2 = Sequential()
-        merged2 = Concatenate([right_branch.output, right_branch_aux1.output], axis=-1)
+        #merged2 = Concatenate([right_branch.output, right_branch_aux1.output], axis=-1)
 
-        right_branch_aux2 = Model(inputs=[right_branch.input, right_branch_aux1.input], outputs=merged2)
-
-		#merged2 = keras.layers.concatenate([right_branch.output, right_branch_aux1.output], axis=-1)
         #right_branch_aux2 = Model(inputs=[right_branch.input, right_branch_aux1.input], outputs=merged2)
 
+		merged2 = keras.layers.concatenate([right_branch.output, right_branch_aux1.output])
+        right_branch_aux2 = Model(inputs=[right_branch.input, right_branch_aux1.input], outputs=merged2)
+
         # right_branch_aux2.add(Merge() ([right_branch, right_branch_aux1], mode='concat'))
-        #right_branch = right_branch_aux2
+        right_branch = right_branch_aux2
     else:
         right_branch.add(gru1)
     right_branch.add(Dropout(0.01))
